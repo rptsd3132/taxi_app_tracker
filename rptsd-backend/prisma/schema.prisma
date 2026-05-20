@@ -1,0 +1,127 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+// Get a free hosted Postgres database in seconds: `npx create-db`
+
+generator client {
+  provider = "prisma-client"
+  output   = "../src/generated/prisma"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+// ─── Enums ───────────────────────────────────────────────────────────────────
+
+enum SubscriptionStatus {
+  TRIAL
+  ACTIVE
+  EXPIRED
+  SUSPENDED
+}
+
+enum PaymentStatus {
+  PENDING
+  SUCCESS
+  FAILED
+  REFUNDED
+}
+
+enum CommentStatus {
+  NEW
+  READ
+  REPLIED
+}
+
+enum AdminRole {
+  SUPER_ADMIN
+  ADMIN
+}
+
+// ─── Models ──────────────────────────────────────────────────────────────────
+
+model User {
+  id                  String             @id @default(uuid())
+  name                String
+  email               String             @unique
+  phone               String
+  passwordHash        String
+  subscriptionStatus  SubscriptionStatus @default(TRIAL)
+  subscriptionEndDate DateTime?
+  deviceId            String?
+  isSuspended         Boolean            @default(false)
+  createdAt           DateTime           @default(now())
+  updatedAt           DateTime           @updatedAt
+
+  payments  Payment[]
+  tripStats TripStat[]
+  comments  Comment[]
+
+  @@index([email])
+  @@index([subscriptionStatus])
+}
+
+model Payment {
+  id            String        @id @default(uuid())
+  userId        String
+  amount        Decimal       @db.Decimal(10, 2)
+  currency      String        @default("LKR")
+  paymentMethod String
+  transactionId String        @unique
+  status        PaymentStatus @default(PENDING)
+  paidAt        DateTime?
+  createdAt     DateTime      @default(now())
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId])
+  @@index([status])
+}
+
+model TripStat {
+  id            String   @id @default(uuid())
+  userId        String
+  date          DateTime @db.Date
+  ridesAccepted Int      @default(0)
+  ridesSkipped  Int      @default(0)
+  totalEarnings Decimal  @default(0) @db.Decimal(10, 2)
+  syncedAt      DateTime @default(now())
+  createdAt     DateTime @default(now())
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([userId, date])
+  @@index([userId])
+  @@index([date])
+}
+
+model Comment {
+  id          String        @id @default(uuid())
+  userId      String
+  message     String        @db.Text
+  adminReply  String?       @db.Text
+  repliedAt   DateTime?
+  repliedById String?
+  status      CommentStatus @default(NEW)
+  createdAt   DateTime      @default(now())
+
+  user      User   @relation(fields: [userId], references: [id], onDelete: Cascade)
+  repliedBy Admin? @relation(fields: [repliedById], references: [id])
+
+  @@index([userId])
+  @@index([status])
+}
+
+model Admin {
+  id           String    @id @default(uuid())
+  email        String    @unique
+  passwordHash String
+  name         String
+  role         AdminRole @default(ADMIN)
+  createdAt    DateTime  @default(now())
+
+  repliedComments Comment[]
+
+  @@index([email])
+}
