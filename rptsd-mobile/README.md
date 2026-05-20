@@ -16,3 +16,5 @@ Open this folder in Android Studio (on Windows) and build from there.
 adb shell am start -n com.simplenotes.helper/.MainActivity
 ```
 EOF
+
+
