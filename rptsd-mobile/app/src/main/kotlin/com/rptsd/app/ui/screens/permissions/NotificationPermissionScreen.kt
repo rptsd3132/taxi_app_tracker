@@ -22,6 +22,7 @@ import androidx.navigation.NavController
 import com.rptsd.app.ui.components.AppButton
 import com.rptsd.app.ui.navigation.Screen
 import com.rptsd.app.utils.PermissionUtils
+// Screen.AccessibilityPermissions is referenced in the "Next" button
 
 @Composable
 fun NotificationPermissionScreen(navController: NavController) {
@@ -112,11 +113,11 @@ fun NotificationPermissionScreen(navController: NavController) {
         }
 
         Button(
-            onClick = { navController.navigate(Screen.Home.route) { popUpTo(0) } },
+            onClick = { navController.navigate(Screen.AccessibilityPermissions.route) },
             enabled = isGranted,
             modifier = Modifier.fillMaxWidth().height(52.dp),
         ) {
-            Text(if (isGranted) "Continue to Home" else "Grant permission to continue")
+            Text(if (isGranted) "Next: Accessibility Permission →" else "Grant permission to continue")
         }
 
         if (!isGranted) {

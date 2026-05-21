@@ -14,6 +14,7 @@ import com.rptsd.app.ui.screens.auth.login.LoginScreen
 import com.rptsd.app.ui.screens.auth.register.RegisterScreen
 import com.rptsd.app.ui.screens.feedback.FeedbackScreen
 import com.rptsd.app.ui.screens.home.HomeScreen
+import com.rptsd.app.ui.screens.permissions.AccessibilityPermissionScreen
 import com.rptsd.app.ui.screens.permissions.NotificationPermissionScreen
 import com.rptsd.app.ui.screens.profile.ProfileScreen
 import com.rptsd.app.ui.screens.settings.SettingsScreen
@@ -58,6 +59,7 @@ fun AppNavigation(
             composable(Screen.Profile.route) { ProfileScreen(navController) }
             composable(Screen.Settings.route) { SettingsScreen(navController) }
             composable(Screen.Permissions.route) { NotificationPermissionScreen(navController) }
+            composable(Screen.AccessibilityPermissions.route) { AccessibilityPermissionScreen(navController) }
         }
     }
 }

@@ -8,6 +8,7 @@ import com.rptsd.app.data.repository.RideHistory
 import com.rptsd.app.data.repository.RideHistoryRepository
 import com.rptsd.app.data.repository.RulesRepository
 import com.rptsd.app.domain.model.UserRules
+import com.rptsd.app.services.ForegroundMonitor
 import com.rptsd.app.utils.PermissionUtils
 import dagger.hilt.android.lifecycle.HiltViewModel
 import dagger.hilt.android.qualifiers.ApplicationContext
@@ -61,6 +62,8 @@ class HomeViewModel @Inject constructor(
     fun toggleAutoAccept(enabled: Boolean) {
         viewModelScope.launch {
             rulesRepository.toggleAutoAccept(enabled)
+            if (enabled) ForegroundMonitor.start(context)
+            else ForegroundMonitor.stop(context)
         }
     }
 }

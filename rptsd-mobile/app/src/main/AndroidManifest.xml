@@ -3,6 +3,8 @@
 
     <uses-permission android:name="android.permission.INTERNET" />
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
+    <uses-permission android:name="android.permission.FOREGROUND_SERVICE" />
+    <uses-permission android:name="android.permission.FOREGROUND_SERVICE_SPECIAL_USE" />
 
     <application
         android:name=".RPTSDApplication"
@@ -24,6 +26,7 @@
             </intent-filter>
         </activity>
 
+        <!-- Notification listener — reads ride notifications from driver apps -->
         <service
             android:name=".services.NotificationListener"
             android:exported="false"
@@ -33,6 +36,26 @@
                 <action android:name="android.service.notification.NotificationListenerService" />
             </intent-filter>
         </service>
+
+        <!-- Accessibility service — taps the Accept button in driver apps -->
+        <service
+            android:name=".services.AutoAcceptAccessibility"
+            android:exported="false"
+            android:label="RPTSD Auto Accept"
+            android:permission="android.permission.BIND_ACCESSIBILITY_SERVICE">
+            <intent-filter>
+                <action android:name="android.accessibilityservice.AccessibilityService" />
+            </intent-filter>
+            <meta-data
+                android:name="android.accessibilityservice"
+                android:resource="@xml/accessibility_service_config" />
+        </service>
+
+        <!-- Foreground service — shows persistent notification while active -->
+        <service
+            android:name=".services.ForegroundMonitor"
+            android:exported="false"
+            android:foregroundServiceType="specialUse" />
 
     </application>
 
